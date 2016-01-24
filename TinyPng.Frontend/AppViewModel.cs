@@ -2,6 +2,7 @@
 
 namespace TinyPng.Frontend
 {
+
     public sealed class AppViewModel
     {
         private String _sourcePath = null;
@@ -49,25 +50,62 @@ namespace TinyPng.Frontend
             }
         }
 
+        private CompressorState _compressorState;
+        public CompressorState CompressorState
+        {
+            get
+            {
+                return this._compressorState;
+            }
+            set
+            {
+                this._compressorState = value;
+                switch (this._compressorState)
+                {
+                    case CompressorState.Idle:
+                        this.CompressIdled(this);
+                        break;
+                    case CompressorState.Working:
+                        this.CompressStarted(this);
+                        break;
+                    case CompressorState.Stopped:
+                        this.CompressStopped(this);
+                        break;
+                }
+            }
+        }
+
         public event Action<Object, String> SourcePathChanged = (o, e) => {};
         public event Action<Object, String> TargetPathChanged = (o, e) => {};
         public event Action<Object, Boolean> CanStartChanged = (o, e) => {};
 
+        public event Action<Object> CompressStarted = (o) => {};
+        public event Action<Object> CompressStopped = (o) => {};
+        public event Action<Object> CompressIdled = (o) => {};
+
         public AppViewModel()
         {
-            this.SourcePathChanged += (o, e) =>
-                {
-                    this.CanStart = 
-                        !String.IsNullOrEmpty(this.SourcePath) &&
-                        !String.IsNullOrEmpty(this.TargetPath);
-                };
-            this.TargetPathChanged += (o, e) =>
-                {
-                    this.CanStart = 
-                        !String.IsNullOrEmpty(this.SourcePath) &&
-                        !String.IsNullOrEmpty(this.TargetPath);
-                };
+            this.SourcePathChanged += (o, e) => this.UpdateCanStart();
+            this.TargetPathChanged += (o, e) => this.UpdateCanStart();
+            this.CompressStarted += (o) => this.UpdateCanStart();
+            this.CompressStopped += (o) => this.UpdateCanStart();
+            this.CompressIdled += (o) => this.UpdateCanStart();
         }
+
+        private void UpdateCanStart()
+        {
+            this.CanStart = 
+                !String.IsNullOrEmpty(this.SourcePath) &&
+                !String.IsNullOrEmpty(this.TargetPath) &&
+                this.CompressorState == CompressorState.Idle;
+        }
+    }
+
+    public enum CompressorState
+    {
+        Idle,
+        Working,
+        Stopped,
     }
 }
 

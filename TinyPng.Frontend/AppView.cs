@@ -9,30 +9,59 @@ namespace TinyPng.Frontend
     sealed class AppView : Form
     {
         private AppViewModel ViewModel { get; set; }
+
         private ImageCompressor Compressor { get; set; }
 
         private TableLayoutPanel RootLayout { get; set; }
+
         private FolderSelector SourceSelector { get; set; }
+
         private FolderSelector TargetSelector { get; set; }
-        private Button Convert { get; set; }
+
+        private Button CompressButton { get; set; }
 
         public AppView()
             : base()
         {
             this.ViewModel = new AppViewModel();
-            this.ViewModel.CanStartChanged += (o, e) => 
+            this.ViewModel.CanStartChanged += (o, e) =>
+            {
+                this.CompressButton.Enabled = e;
+                if (e)
                 {
-                    this.Convert.Enabled = e;
-                    if (e)
-                    {
-                        this.Compressor = new ImageCompressor(new ImageCompressorSettings(
+                    this.Compressor = new ImageCompressor(new ImageCompressorSettings(
                             this.ViewModel.SourcePath,
                             this.ViewModel.TargetPath,
-                            2, 3));
-                        this.Compressor.Started += this.Compressor_Started;
-                        this.Compressor.Stopped += this.Compressor_Stopped;
-                    }
+                            2, 1));
+                    this.Compressor.Started += this.Compressor_Started;
+                    this.Compressor.Stopped += this.Compressor_Stopped;
+                }
+            };
+            this.ViewModel.CompressStarted += (o) =>
+            {
+                this.SourceSelector.Enabled = false;
+                this.TargetSelector.Enabled = false;
+                this.CompressButton.Text = "Compressing...";
+            };
+            this.ViewModel.CompressStopped += (o) =>
+            {
+                this.SourceSelector.Enabled = true;
+                this.TargetSelector.Enabled = true;
+                this.CompressButton.Text = "Finished!";
+                
+                var timer = new Timer();
+                timer.Interval = 2000;
+                timer.Tick += (t, e) =>
+                {
+                    timer.Stop();
+                    this.ViewModel.CompressorState = CompressorState.Idle;
                 };
+                timer.Start();
+            };
+            this.ViewModel.CompressIdled += (o) =>
+            {
+                this.CompressButton.Text = "Compress";
+            };
 
             this.SourceSelector = new FolderSelector();
             this.SourceSelector.Text = "Source path:";
@@ -42,11 +71,15 @@ namespace TinyPng.Frontend
             this.TargetSelector.Text = "Target path:";
             this.TargetSelector.FolderChanged += (o, e) => this.ViewModel.TargetPath = e;
 
-            this.Convert = new Button();
-            this.Convert.Text = "Convert";
-            this.Convert.Enabled = false;
-            this.Convert.Dock = DockStyle.Fill;
-            this.Convert.Click += (sender, e) => this.Compressor.Start();
+            this.CompressButton = new Button();
+            this.CompressButton.Text = "Compress";
+            this.CompressButton.Enabled = false;
+            this.CompressButton.Dock = DockStyle.Fill;
+            this.CompressButton.Click += (sender, e) =>
+            {
+                this.CompressButton.Enabled = false;
+                this.Compressor.Start();
+            };
 
             this.RootLayout = new TableLayoutPanel();
             this.RootLayout.ColumnCount = 1;
@@ -60,7 +93,7 @@ namespace TinyPng.Frontend
 
             this.RootLayout.Controls.Add(this.SourceSelector, 0, 0);
             this.RootLayout.Controls.Add(this.TargetSelector, 0, 1);
-            this.RootLayout.Controls.Add(this.Convert, 0, 3);
+            this.RootLayout.Controls.Add(this.CompressButton, 0, 3);
 
             this.MinimumSize = new Size(640, 480);
             this.TopMost = true;
@@ -73,12 +106,12 @@ namespace TinyPng.Frontend
 
         private void Compressor_Stopped(Object sender, EventArgs e)
         {
-            this.Invoke(new MethodInvoker(() => this.ViewModel.CanStart = true));
+            this.Invoke(new MethodInvoker(() => this.ViewModel.CompressorState = CompressorState.Stopped));
         }
 
         private void Compressor_Started(Object sender, EventArgs e)
         {
-            this.Invoke(new MethodInvoker(() => this.ViewModel.CanStart = false));
+            this.Invoke(new MethodInvoker(() => this.ViewModel.CompressorState = CompressorState.Working));
         }
     }
 }
