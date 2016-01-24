@@ -6,7 +6,7 @@
     <ProjectGuid>{487F4B05-B173-4E30-B11F-297D341F8DDA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>TinyPng.Frontend</RootNamespace>
-    <AssemblyName>TinyUrl.Frontend</AssemblyName>
+    <AssemblyName>TinyPng.Frontend</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
