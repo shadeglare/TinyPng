@@ -134,9 +134,12 @@ namespace TinyPng.Tools
 
         public Single ProgressPercentage { get; private set; }
 
-        public CompressProgressChangedEventArgs(String id, Single progressPercentage)
+        public FileEndpoints Endpoints { get; private set; }
+
+        public CompressProgressChangedEventArgs(String id, FileEndpoints endpoints, Single progressPercentage)
         {
             this.Id = id;
+            this.Endpoints = endpoints;
             this.ProgressPercentage = progressPercentage;
         }
     }
@@ -145,9 +148,12 @@ namespace TinyPng.Tools
     {
         public String Id { get; private set; }
 
-        public CompressCompletedEventArgs(String id)
+        public FileEndpoints Endpoints { get; private set; }
+
+        public CompressCompletedEventArgs(String id, FileEndpoints endpoints)
         {
             this.Id = id;
+            this.Endpoints = endpoints;
         }
     }
 

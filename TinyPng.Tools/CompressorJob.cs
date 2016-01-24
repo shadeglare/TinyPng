@@ -63,26 +63,26 @@ namespace TinyPng.Tools
 
         private void ProcessImage(String id, Int32 position)
         {
-            var endpoint = this.ImageEndpoints[id];
-            this.UploadFile(id, endpoint.Source.FilePath);
-            this.DownloadFile(id, endpoint.Target, position);
+            var endpoints = this.ImageEndpoints[id];
+            this.UploadFile(id, endpoints);
+            this.DownloadFile(id, endpoints, position);
         }
 
-        private void UploadFile(String id, String filePath)
+        private void UploadFile(String id, FileEndpoints endpoints)
         {
-            this.OnProgressChanged(new CompressProgressChangedEventArgs(id, 10));
-            this.UploadElement.SendKeys(filePath);
-            this.OnProgressChanged(new CompressProgressChangedEventArgs(id, 50));
+            this.OnProgressChanged(new CompressProgressChangedEventArgs(id, endpoints, 10));
+            this.UploadElement.SendKeys(endpoints.Source.FilePath);
+            this.OnProgressChanged(new CompressProgressChangedEventArgs(id, endpoints, 50));
         }
 
-        private void DownloadFile(String id, FileInfo target, Int32 position)
+        private void DownloadFile(String id, FileEndpoints endpoints, Int32 position)
         {
             var uploadedFileUrl = this.ExtractUploadedFileUrl(position);
-            DirectoryHelper.GetOrCreateDirectory(target.DirectoryName);
-            this.OnProgressChanged(new CompressProgressChangedEventArgs(id, 60));
-            this.WebClient.DownloadFile(uploadedFileUrl, target.FilePath);
-            this.OnProgressChanged(new CompressProgressChangedEventArgs(id, 100));
-            this.OnCompleted(new CompressCompletedEventArgs(id));
+            DirectoryHelper.GetOrCreateDirectory(endpoints.Target.DirectoryName);
+            this.OnProgressChanged(new CompressProgressChangedEventArgs(id, endpoints, 60));
+            this.WebClient.DownloadFile(uploadedFileUrl, endpoints.Target.FilePath);
+            this.OnProgressChanged(new CompressProgressChangedEventArgs(id, endpoints, 100));
+            this.OnCompleted(new CompressCompletedEventArgs(id, endpoints));
         }
 
         public event CompressProgressChanged ProgressChanged = (o, e) => {};

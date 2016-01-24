@@ -18,6 +18,10 @@ namespace TinyPng.Frontend
 
         private FolderSelector TargetSelector { get; set; }
 
+        private DataGridView OperationLogsGrid { get; set; }
+
+        private Label OperationLabel { get; set; }
+
         private Button CompressButton { get; set; }
 
         public AppView()
@@ -35,12 +39,14 @@ namespace TinyPng.Frontend
                             2, 5));
                     this.Compressor.Started += this.Compressor_Started;
                     this.Compressor.Stopped += this.Compressor_Stopped;
+                    this.Compressor.ImageCompressCompleted += this.Compressor_ImageCompressComplete;
                 }
             };
             this.ViewModel.CompressStarted += (o) =>
             {
                 this.SourceSelector.Enabled = false;
                 this.TargetSelector.Enabled = false;
+                this.OperationLogsGrid.Rows.Clear();
                 this.CompressButton.Text = "Compressing...";
             };
             this.ViewModel.CompressStopped += (o) =>
@@ -71,6 +77,19 @@ namespace TinyPng.Frontend
             this.TargetSelector.Text = "Target path:";
             this.TargetSelector.FolderChanged += (o, e) => this.ViewModel.TargetPath = e;
 
+            this.OperationLogsGrid = new DataGridView();
+            this.OperationLogsGrid.Dock = DockStyle.Fill;
+            this.OperationLogsGrid.ReadOnly = true;
+            this.OperationLogsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            this.OperationLogsGrid.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            this.OperationLogsGrid.Columns.Add("FileSourcePath", "Source File");
+            this.OperationLogsGrid.Columns.Add("FileTargetPath", "Destination File");
+
+            this.OperationLabel = new Label();
+            this.OperationLabel.Text = "Compression results:";
+            this.OperationLabel.Dock = DockStyle.Fill;
+            this.OperationLabel.TextAlign = ContentAlignment.MiddleLeft;
+
             this.CompressButton = new Button();
             this.CompressButton.Text = "Compress";
             this.CompressButton.Enabled = false;
@@ -88,12 +107,15 @@ namespace TinyPng.Frontend
             this.RootLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
             this.RootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
             this.RootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
+            this.RootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
             this.RootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             this.RootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 50));
 
             this.RootLayout.Controls.Add(this.SourceSelector, 0, 0);
             this.RootLayout.Controls.Add(this.TargetSelector, 0, 1);
-            this.RootLayout.Controls.Add(this.CompressButton, 0, 3);
+            this.RootLayout.Controls.Add(this.OperationLabel, 0, 2);
+            this.RootLayout.Controls.Add(this.OperationLogsGrid, 0, 3);
+            this.RootLayout.Controls.Add(this.CompressButton, 0, 4);
 
             this.MinimumSize = new Size(640, 480);
             this.TopMost = true;
@@ -112,6 +134,12 @@ namespace TinyPng.Frontend
         private void Compressor_Started(Object sender, EventArgs e)
         {
             this.Invoke(new MethodInvoker(() => this.ViewModel.CompressorState = CompressorState.Working));
+        }
+
+        private void Compressor_ImageCompressComplete(Object sender, CompressCompletedEventArgs e)
+        {
+            this.Invoke(new MethodInvoker(() => this.OperationLogsGrid.Rows.Add(
+                new []{ e.Endpoints.Source.FilePath, e.Endpoints.Target.FilePath })));
         }
     }
 }
