@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyPng.Tools", "TinyPng.Tools\TinyPng.Tools.csproj", "{6AD46F18-2487-4309-AF45-FAD6ED509738}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyPng.Frontend", "TinyPng.Frontend\TinyPng.Frontend.csproj", "{487F4B05-B173-4E30-B11F-297D341F8DDA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{487F4B05-B173-4E30-B11F-297D341F8DDA}.Debug|x86.ActiveCfg = Debug|x86
+		{487F4B05-B173-4E30-B11F-297D341F8DDA}.Debug|x86.Build.0 = Debug|x86
+		{487F4B05-B173-4E30-B11F-297D341F8DDA}.Release|x86.ActiveCfg = Release|x86
+		{487F4B05-B173-4E30-B11F-297D341F8DDA}.Release|x86.Build.0 = Release|x86
+		{6AD46F18-2487-4309-AF45-FAD6ED509738}.Debug|x86.ActiveCfg = Debug|x86
+		{6AD46F18-2487-4309-AF45-FAD6ED509738}.Debug|x86.Build.0 = Debug|x86
+		{6AD46F18-2487-4309-AF45-FAD6ED509738}.Release|x86.ActiveCfg = Release|x86
+		{6AD46F18-2487-4309-AF45-FAD6ED509738}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal
