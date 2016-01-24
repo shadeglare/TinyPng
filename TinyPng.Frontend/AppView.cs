@@ -32,7 +32,7 @@ namespace TinyPng.Frontend
                     this.Compressor = new ImageCompressor(new ImageCompressorSettings(
                             this.ViewModel.SourcePath,
                             this.ViewModel.TargetPath,
-                            2, 1));
+                            2, 5));
                     this.Compressor.Started += this.Compressor_Started;
                     this.Compressor.Stopped += this.Compressor_Stopped;
                 }
