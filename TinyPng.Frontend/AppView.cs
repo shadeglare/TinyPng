@@ -39,7 +39,7 @@ namespace TinyPng.Frontend
                             2, 5));
                     this.Compressor.Started += this.Compressor_Started;
                     this.Compressor.Stopped += this.Compressor_Stopped;
-                    this.Compressor.ImageCompressCompleted += this.Compressor_ImageCompressComplete;
+                    this.Compressor.ImageCompressCompleted += this.Compressor_ImageCompressCompleted;
                 }
             };
             this.ViewModel.CompressStarted += (o) =>
@@ -136,7 +136,7 @@ namespace TinyPng.Frontend
             this.Invoke(new MethodInvoker(() => this.ViewModel.CompressorState = CompressorState.Working));
         }
 
-        private void Compressor_ImageCompressComplete(Object sender, CompressCompletedEventArgs e)
+        private void Compressor_ImageCompressCompleted(Object sender, CompressCompletedEventArgs e)
         {
             this.Invoke(new MethodInvoker(() => this.OperationLogsGrid.Rows.Add(
                 new []{ e.Endpoints.Source.FilePath, e.Endpoints.Target.FilePath })));
